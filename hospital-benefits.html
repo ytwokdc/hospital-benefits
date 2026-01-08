@@ -10,6 +10,50 @@
         body {
             font-family: 'Prompt', sans-serif;
         }
+        
+        /* Modal animation */
+        .modal-backdrop {
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Scrollbar styling for modal */
+        .modal-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .modal-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .modal-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .modal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen">
@@ -20,31 +64,7 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
-        const { useState } = React;
-
-        /*
-         * คู่มือการใส่โลโก้จริง:
-         * ===================================
-         * 
-         * วิธีที่ 1: ใช้ไฟล์รูปภาพในเครื่อง
-         * 1. สร้างโฟลเดอร์ชื่อ "images" ในที่เดียวกับไฟล์ hospital-benefits.html
-         * 2. ใส่ไฟล์รูปโลโก้โรงพยาบาลในโฟลเดอร์ images (เช่น vibhavadi.png, piyavate.jpg)
-         * 3. เปลี่ยนค่า logo จาก "🏥" เป็น "images/ชื่อไฟล์.png"
-         * 
-         * ตัวอย่าง:
-         * logo: "images/vibhavadi.png",
-         * logo: "images/piyavate.jpg",
-         * 
-         * วิธีที่ 2: ใช้ URL จากอินเทอร์เน็ต
-         * logo: "https://example.com/logo.png",
-         * 
-         * โครงสร้างโฟลเดอร์ที่แนะนำ:
-         * ├── hospital-benefits.html  (ไฟล์นี้)
-         * └── images/
-         *     ├── hospital1.png
-         *     ├── hospital2.jpg
-         *     └── ...
-         */
+        const { useState, useEffect } = React;
 
         const hospitalsData = [
             {
@@ -57,8 +77,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด - แสดงบัตรประจำตัวพนักงาน",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน - แสดงหนังสือส่งตัวของสำนักงาน/บัตรประจำตัวพนักงาน"
                 ],
-                discount: "ไม่ระบุ",
-                color: "from-blue-500 to-blue-600"
+                discount: "ไม่ระบุ"
             },
             {
                 id: 2,
@@ -75,8 +94,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "5-30%",
-                color: "from-green-500 to-green-600"
+                discount: "5-30%"
             },
             {
                 id: 3,
@@ -87,8 +105,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด - แสดงบัตรประจำตัวพนักงาน",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน - แสดงหนังสือส่งตัวของสำนักงาน/บัตรประจำตัวพนักงาน"
                 ],
-                discount: "ไม่ระบุ",
-                color: "from-purple-500 to-purple-600"
+                discount: "ไม่ระบุ"
             },
             {
                 id: 4,
@@ -100,8 +117,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 7.5%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "7.5-10%",
-                color: "from-pink-500 to-pink-600"
+                discount: "7.5-10%"
             },
             {
                 id: 5,
@@ -113,8 +129,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "ไม่ระบุ",
-                color: "from-yellow-500 to-yellow-600"
+                discount: "ไม่ระบุ"
             },
             {
                 id: 6,
@@ -127,8 +142,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-red-500 to-red-600"
+                discount: "10%"
             },
             {
                 id: 7,
@@ -142,8 +156,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 10%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "5-20%",
-                color: "from-indigo-500 to-indigo-600"
+                discount: "5-20%"
             },
             {
                 id: 8,
@@ -154,8 +167,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 8%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "8-10%",
-                color: "from-teal-500 to-teal-600"
+                discount: "8-10%"
             },
             {
                 id: 9,
@@ -167,8 +179,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 10%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-orange-500 to-orange-600"
+                discount: "10%"
             },
             {
                 id: 10,
@@ -179,8 +190,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 5%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "5-10%",
-                color: "from-cyan-500 to-cyan-600"
+                discount: "5-10%"
             },
             {
                 id: 11,
@@ -192,8 +202,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%) / ชำระบัตรเครดิต (ลด 5%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "5-10%",
-                color: "from-lime-500 to-lime-600"
+                discount: "5-10%"
             },
             {
                 id: 12,
@@ -205,8 +214,7 @@
                     "ผู้ป่วยใน: ค่ายา ค่าห้อง ค่าแล็บ ค่าเอ็กซเรย์ปกติ - ส่วนลด 15%",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10-15%",
-                color: "from-emerald-500 to-emerald-600"
+                discount: "10-15%"
             },
             {
                 id: 13,
@@ -218,8 +226,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-violet-500 to-violet-600"
+                discount: "10%"
             },
             {
                 id: 14,
@@ -231,8 +238,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-fuchsia-500 to-fuchsia-600"
+                discount: "10%"
             },
             {
                 id: 15,
@@ -244,8 +250,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-rose-500 to-rose-600"
+                discount: "10%"
             },
             {
                 id: 16,
@@ -257,8 +262,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-sky-500 to-sky-600"
+                discount: "10%"
             },
             {
                 id: 17,
@@ -270,8 +274,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10-20%",
-                color: "from-amber-500 to-amber-600"
+                discount: "10-20%"
             },
             {
                 id: 18,
@@ -283,8 +286,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-slate-500 to-slate-600"
+                discount: "10%"
             },
             {
                 id: 19,
@@ -296,8 +298,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-zinc-500 to-zinc-600"
+                discount: "10%"
             },
             {
                 id: 20,
@@ -309,8 +310,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-neutral-500 to-neutral-600"
+                discount: "10%"
             },
             {
                 id: 21,
@@ -322,8 +322,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-stone-500 to-stone-600"
+                discount: "10%"
             },
             {
                 id: 22,
@@ -335,8 +334,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-red-600 to-red-700"
+                discount: "10%"
             },
             {
                 id: 23,
@@ -348,8 +346,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "10%",
-                color: "from-blue-600 to-blue-700"
+                discount: "10%"
             },
             {
                 id: 24,
@@ -362,8 +359,7 @@
                     "ผู้ป่วยนอก: ชำระเงินสด (ลด 10%)",
                     "ผู้ป่วยใน: ทำหนังสือส่งตัวเครดิต 30 วัน"
                 ],
-                discount: "5-10%",
-                color: "from-green-600 to-green-700"
+                discount: "5-10%"
             },
             {
                 id: 25,
@@ -377,90 +373,45 @@
                     "ค่ากายภาพบำบัด - ส่วนลด 20%",
                     "ผู้ป่วยนอก: ชำระเงินสด"
                 ],
-                discount: "15-30%",
-                color: "from-purple-600 to-purple-700"
+                discount: "15-30%"
             }
         ];
 
         function App() {
             const [selectedHospital, setSelectedHospital] = useState(null);
             const [searchTerm, setSearchTerm] = useState("");
+            const [visitCount, setVisitCount] = useState(0);
+
+            // Load and increment visit counter
+            useEffect(() => {
+                const count = parseInt(localStorage.getItem('hospitalVisitCount') || '0');
+                const newCount = count + 1;
+                localStorage.setItem('hospitalVisitCount', newCount.toString());
+                setVisitCount(newCount);
+            }, []);
 
             const filteredHospitals = hospitalsData.filter(hospital =>
                 hospital.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
-            if (selectedHospital) {
-                return (
-                    <div className="min-h-screen p-4 md:p-8">
-                        <div className="max-w-4xl mx-auto">
-                            {/* Back Button */}
-                            <button
-                                onClick={() => setSelectedHospital(null)}
-                                className="mb-6 flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors text-base md:text-lg"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                </svg>
-                                กลับหน้าหลัก
-                            </button>
+            // Close modal when clicking backdrop
+            const handleBackdropClick = (e) => {
+                if (e.target === e.currentTarget) {
+                    setSelectedHospital(null);
+                }
+            };
 
-                            {/* Hospital Detail Card */}
-                            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                                <div className={`bg-gradient-to-r ${selectedHospital.color} p-6 md:p-10 text-white`}>
-                                    <div className="flex items-center gap-3 md:gap-4 mb-4">
-                                        {/* โลโก้โรงพยาบาล */}
-                                        <div className="w-16 h-16 md:w-24 md:h-24 bg-white rounded-2xl flex items-center justify-center shadow-xl flex-shrink-0">
-                                            {selectedHospital.logo.startsWith('http') || selectedHospital.logo.startsWith('images/') ? (
-                                                <img src={selectedHospital.logo} alt={selectedHospital.name} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
-                                            ) : (
-                                                <span className="text-4xl md:text-6xl">{selectedHospital.logo}</span>
-                                            )}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h1 className="text-xl md:text-4xl font-bold mb-2">
-                                                {selectedHospital.name}
-                                            </h1>
-                                            <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                                                <p className="text-sm md:text-lg font-medium">
-                                                    ส่วนลด: {selectedHospital.discount}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 md:p-10">
-                                    <h2 className="text-xl md:text-3xl font-semibold text-gray-800 mb-6 md:mb-8 flex items-center gap-3">
-                                        <svg className="w-6 h-6 md:w-8 md:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        สิทธิประโยชน์
-                                    </h2>
-
-                                    <div className="space-y-4 md:space-y-5">
-                                        {selectedHospital.benefits.map((benefit, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex gap-3 md:gap-4 p-4 md:p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-                                            >
-                                                <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2 md:mt-3"></div>
-                                                <p className="text-gray-700 leading-relaxed flex-1 text-base md:text-lg">{benefit}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-8 md:mt-10 p-4 md:p-6 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-                                        <p className="text-sm md:text-base text-gray-600 leading-relaxed">
-                                            <strong className="text-base md:text-lg">หมายเหตุ:</strong> กรณีชำระด้วยบัตรเครดิต จะได้รับส่วนลดตามที่บริษัทบัตรเครดิตนั้นๆ ได้ตกลงไว้กับโรงพยาบาล
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
+            // Prevent body scroll when modal is open
+            useEffect(() => {
+                if (selectedHospital) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = 'unset';
+                }
+                return () => {
+                    document.body.style.overflow = 'unset';
+                };
+            }, [selectedHospital]);
 
             return (
                 <div className="min-h-screen p-4 md:p-8">
@@ -496,7 +447,7 @@
                             </div>
                         </div>
 
-                        {/* Hospital Grid - 5 คอลัมน์ */}
+                        {/* Hospital Grid - ทุกการ์ดใช้สีฟ้าเข้มเหมือนกัน */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                             {filteredHospitals.map((hospital) => (
                                 <button
@@ -504,10 +455,10 @@
                                     onClick={() => setSelectedHospital(hospital)}
                                     className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 hover:scale-105"
                                 >
-                                    <div className={`bg-gradient-to-br ${hospital.color} aspect-square flex items-center justify-center p-6 relative overflow-hidden`}>
+                                    {/* สีฟ้าเข้มเหมือนกันทุกการ์ด */}
+                                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 aspect-square flex items-center justify-center p-6 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-white/10 transform -skew-y-6 group-hover:skew-y-6 transition-transform duration-500"></div>
                                         <div className="relative z-10 w-full h-full flex items-center justify-center">
-                                            {/* แสดงโลโก้ - ถ้าเป็น URL จะแสดงรูป ถ้าเป็น emoji จะแสดง emoji */}
                                             {hospital.logo.startsWith('http') || hospital.logo.startsWith('images/') ? (
                                                 <img 
                                                     src={hospital.logo} 
@@ -516,7 +467,7 @@
                                                 />
                                             ) : (
                                                 <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                                                    <span className="text-4xl md:text-5xl">{hospital.logo}</span>
+                                                    <span className="text-4xl md:text-5xl">🏥</span>
                                                 </div>
                                             )}
                                         </div>
@@ -539,12 +490,97 @@
                             </div>
                         )}
 
-                        {/* Footer */}
+                        {/* Footer with Counter */}
                         <div className="mt-16 text-center text-gray-500 text-xs md:text-sm pb-8">
+                            <div className="mb-4 flex items-center justify-center gap-2">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span className="text-base font-medium text-gray-700">
+                                    เข้าชม: <span className="text-blue-600 font-bold">{visitCount.toLocaleString()}</span> ครั้ง
+                                </span>
+                            </div>
                             <p>ข้อมูลอัพเดตล่าสุด: มกราคม 2026</p>
                             <p className="mt-2">รายละเอียดสิทธิประโยชน์อาจมีการเปลี่ยนแปลง กรุณาติดต่อโรงพยาบาลเพื่อยืนยัน</p>
                         </div>
                     </div>
+
+                    {/* Modal Popup */}
+                    {selectedHospital && (
+                        <div 
+                            className="modal-backdrop fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                            onClick={handleBackdropClick}
+                        >
+                            <div 
+                                className="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Modal Header */}
+                                <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 md:p-6 text-white relative">
+                                    {/* ปุ่มปิด X มุมขวาบน */}
+                                    <button
+                                        onClick={() => setSelectedHospital(null)}
+                                        className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors group"
+                                        aria-label="ปิด"
+                                    >
+                                        <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+
+                                    <div className="flex items-center gap-3 pr-12">
+                                        {/* โลโก้ */}
+                                        <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            {selectedHospital.logo.startsWith('http') || selectedHospital.logo.startsWith('images/') ? (
+                                                <img src={selectedHospital.logo} alt={selectedHospital.name} className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+                                            ) : (
+                                                <span className="text-3xl md:text-4xl">🏥</span>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h2 className="text-lg md:text-2xl font-bold mb-1 line-clamp-2">
+                                                {selectedHospital.name}
+                                            </h2>
+                                            <div className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                                                <p className="text-xs md:text-sm font-medium">
+                                                    ส่วนลด: {selectedHospital.discount}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Modal Content */}
+                                <div className="modal-scroll overflow-y-auto p-4 md:p-6" style={{maxHeight: 'calc(85vh - 140px)'}}>
+                                    <h3 className="text-base md:text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                                        <svg className="w-5 h-5 md:w-6 md:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        สิทธิประโยชน์
+                                    </h3>
+
+                                    <div className="space-y-3">
+                                        {selectedHospital.benefits.map((benefit, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex gap-2 md:gap-3 p-3 md:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                            >
+                                                <div className="flex-shrink-0 w-1.5 h-1.5 bg-blue-500 rounded-full mt-2"></div>
+                                                <p className="text-gray-700 leading-relaxed flex-1 text-sm md:text-base">{benefit}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-6 p-3 md:p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                                        <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                                            <strong className="text-sm md:text-base">หมายเหตุ:</strong> กรณีชำระด้วยบัตรเครดิต จะได้รับส่วนลดตามที่บริษัทบัตรเครดิตนั้นๆ ได้ตกลงไว้กับโรงพยาบาล
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
